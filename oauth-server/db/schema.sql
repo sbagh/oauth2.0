@@ -1,0 +1,40 @@
+-- CREATE DATABASE IF NOT EXISTS oauth_server_db
+
+-- Users Table
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Clients Table
+CREATE TABLE IF NOT EXISTS clients (
+  id SERIAL PRIMARY KEY,
+  client_id VARCHAR(255) UNIQUE NOT NULL,
+  client_secret VARCHAR(255) NOT NULL,
+  redirect_uri VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Authorization Codes Table
+CREATE TABLE IF NOT EXISTS authorization_codes (
+  code VARCHAR(255) PRIMARY KEY,
+  client_id VARCHAR(255) NOT NULL,
+  redirect_uri VARCHAR(255) NOT NULL,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  scope TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Access Tokens Table
+CREATE TABLE IF NOT EXISTS access_tokens (
+  access_token VARCHAR(255) PRIMARY KEY,
+  refresh_token VARCHAR(255) UNIQUE,
+  client_id VARCHAR(255) NOT NULL,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  expires_in INTEGER NOT NULL,
+  scope TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
