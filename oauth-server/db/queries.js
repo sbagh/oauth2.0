@@ -1,15 +1,14 @@
 import { Pool } from "pg";
 import dotenv from "dotenv";
-
 dotenv.config();
 
 // connect to db:
 const pool = new Pool({
-   user: dotenv.DB_USER,
-   password: dotenv.DB_PASS,
+   user: process.env.DB_USER,
+   password: process.env.DB_PASS,
    database: "oauth_server_db",
    host: "localhost",
-   port: dotenv.DB_PORT,
+   port: process.env.DB_PORT,
 });
 
 // query db for the client assosiacted with client_id
@@ -36,12 +35,12 @@ export const saveAuthorizationCode = async (
    code,
    clientId,
    redirectUri,
-   userId,
+   userId = 1,
    scope
 ) => {
    // set expiration time for the code
-   const duration = dotenv.AUTHORIZATION_CODE_DURATION;
-   const expiresAt = new Date(Date.now() + duration); // Setting code to expire in 30 minutes
+   const authCodeDuration = parseInt(process.env.AUTHORIZATION_CODE_DURATION);
+   const expiresAt = new Date(Date.now() + authCodeDuration);
    try {
       const queryString = `
             INSERT INTO authorization_codes (code, client_id, redirect_uri, user_id, expires_at, scope)

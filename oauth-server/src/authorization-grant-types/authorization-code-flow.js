@@ -1,5 +1,6 @@
 import { getClient, saveAuthorizationCode } from "../db/queries.js";
-import { generateUniqueCode } from "./utils/code-generator.js"; // You need to create this utility
+import { generateUniqueCode } from "./utils/code-generator.js";
+import OAuthError from "../errors/OAuthError.js";
 
 export default class AuthCodeFlow {
    constructor(code, clientId, redirectUri, scope, state) {
@@ -14,8 +15,10 @@ export default class AuthCodeFlow {
    async authorize() {
       // verify if the client exists
       const client = await getClient(this.clientId);
+
+      // check if client exists and if the redirect URI matches
       if (!client || client.redirect_uri !== this.redirectUri) {
-         throw new Error("Invalid client or redirect URI");
+         throw OAuthError.invalidClient(this.redirectUri, this.state);
       }
       // generate authorization code
       const code = generateUniqueCode();
