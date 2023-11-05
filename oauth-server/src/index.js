@@ -14,11 +14,15 @@ app.get("/authorize", async (req, res) => {
       const { response_type, client_id, redirect_uri, scope, state } =
          req.query;
 
-      // chekc for all required params
+      // check for required params
+      if (!redirect_uri) {
+         throw OAuthError.missingRedirectUri();
+      }
       if (!response_type || !client_id || !redirect_uri) {
          throw OAuthError.invalidRequest(redirect_uri, state);
       }
 
+      // authorization code grant type:
       if (response_type === "code") {
          // create a new authorization code flow
          const authCodeFlow = new AuthCodeFlow(
@@ -27,6 +31,7 @@ app.get("/authorize", async (req, res) => {
             scope,
             state
          );
+
          // Authorize the client and get the code
          const code = await authCodeFlow.authorize();
 
@@ -37,16 +42,11 @@ app.get("/authorize", async (req, res) => {
          return res.redirect(successfulRedirectUri);
       }
    } catch (error) {
-      // if error is instance of OAuthError, redirect the user to the redirect_uri with the error and state
-      if (error instanceof OAuthError && error.redirectUri) {
-         return res.redirect(
-            `${error.redirectUri}?error=${encodeURIComponent(
-               error.message
-            )}&state=${encodeURIComponent(error.state || "")}`
-         );
-      }
-      // else, return a server error
-      else {
+      // if error is instance of OAuthError class, handle the response
+      if (error instanceof OAuthError) {
+         error.handleResponse(res);
+      } else {
+         // else, return a server error
          console.error(error);
          res.status(500).json({
             error: "server_error",
