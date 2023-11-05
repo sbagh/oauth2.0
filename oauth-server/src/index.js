@@ -1,6 +1,6 @@
 import express from "express";
 import AuthCodeFlow from "./authorization-grant-types/authorization-code-flow.js";
-import OAuthError from "./errors/OAuthError.js";
+import AuthError from "./errors/AuthError.js";
 
 const app = express();
 app.use(express.json());
@@ -35,18 +35,20 @@ app.get("/authorize", async (req, res) => {
          // Authorize the client and get the code
          const code = await authCodeFlow.authorize();
 
-         // Authorization response - redirect the user to the redirect_uri with the code and state
+         // build the authorization response with the auth code and state
          const successfulRedirectUri = `${redirect_uri}?code=${encodeURIComponent(
             code
          )}&state=${encodeURIComponent(state)}`;
+
+         // redirect user with the authorization code
          return res.redirect(successfulRedirectUri);
       }
    } catch (error) {
-      // if error is instance of OAuthError class, handle the response
-      if (error instanceof OAuthError) {
-         error.handleResponse(res);
+      // if error is instance of AuthError class, handle the response else return a server error
+      if (error instanceof AuthError) {
+         error.handleAuthErrorResponse(res);
       } else {
-         // else, return a server error
+         //
          console.error(error);
          res.status(500).json({
             error: "server_error",

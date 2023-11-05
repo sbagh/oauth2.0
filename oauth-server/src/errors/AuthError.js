@@ -1,4 +1,4 @@
-class OAuthError extends Error {
+class AuthError extends Error {
    constructor(type, message, statusCode, redirectUri, state) {
       super(message);
       this.type = type;
@@ -41,8 +41,8 @@ class OAuthError extends Error {
    }
 
    // Method to handle the error response
-   handleResponse(res) {
-      // redirect URI is provided in the error
+   handleAuthErrorResponse(res) {
+      // redirect URI is provided in the error:
       if (this.redirectUri) {
          const redirectUrl = `${this.redirectUri}?error=${encodeURIComponent(
             this.type
@@ -51,7 +51,7 @@ class OAuthError extends Error {
          )}&state=${encodeURIComponent(this.state || "")}`;
          res.redirect(redirectUrl);
       } else {
-         // redirect URI is not provided in the error
+         // redirect URI is not provided in the error:
          res.status(this.statusCode).json({
             error: this.type,
             error_description: this.message,
