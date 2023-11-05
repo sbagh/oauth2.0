@@ -1,5 +1,4 @@
-import express, { response } from "express";
-import getClient from "./db/queries.js";
+import express from "express";
 import AuthCodeFlow from "./authorization-grant-types/authorization-code-flow.js";
 
 const app = express();

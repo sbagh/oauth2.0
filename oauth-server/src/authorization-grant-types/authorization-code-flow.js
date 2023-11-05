@@ -2,7 +2,8 @@ import { getClient, saveAuthorizationCode } from "../db/queries.js";
 import { generateUniqueCode } from "./utils/code-generator.js"; // You need to create this utility
 
 export default class AuthCodeFlow {
-   constructor(clientId, redirectUri, scope, state) {
+   constructor(code, clientId, redirectUri, scope, state) {
+      this.code = code;
       this.clientId = clientId;
       this.redirectUri = redirectUri;
       this.scope = scope;
@@ -16,7 +17,6 @@ export default class AuthCodeFlow {
       if (!client || client.redirect_uri !== this.redirectUri) {
          throw new Error("Invalid client or redirect URI");
       }
-
       // generate authorization code
       const code = generateUniqueCode();
 
