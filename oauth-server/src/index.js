@@ -16,10 +16,10 @@ app.get("/authorize", async (req, res) => {
 
       // check for required params
       if (!redirect_uri) {
-         throw OAuthError.missingRedirectUri();
+         throw AuthError.missingRedirectUri();
       }
       if (!response_type || !client_id || !redirect_uri) {
-         throw OAuthError.invalidRequest(redirect_uri, state);
+         throw AuthError.invalidRequest(redirect_uri, state);
       }
 
       // authorization code grant type:
