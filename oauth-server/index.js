@@ -1,5 +1,5 @@
 import express from "express";
-import AuthCodeFlow from "./authorization-grant-types/authorization-code-flow.js";
+import AuthCodeFlow from "./authorization-grant-types/authorizationCodeFlow.js";
 import AuthError from "./errors/AuthError.js";
 
 const app = express();
@@ -26,6 +26,7 @@ app.get("/authorize", async (req, res) => {
       if (response_type === "code") {
          // create a new authorization code flow
          const authCodeFlow = new AuthCodeFlow(
+            response_type,
             client_id,
             redirect_uri,
             scope,
@@ -40,6 +41,7 @@ app.get("/authorize", async (req, res) => {
             code
          )}&state=${encodeURIComponent(state)}`;
 
+         console.log("successfulRedirectUri: ", successfulRedirectUri);
          // redirect user with the authorization code
          return res.redirect(successfulRedirectUri);
       }

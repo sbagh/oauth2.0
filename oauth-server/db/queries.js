@@ -1,14 +1,15 @@
-import { Pool } from "pg";
+import pkg from "pg";
 import dotenv from "dotenv";
+const { Pool } = pkg;
 dotenv.config();
 
 // connect to db:
 const pool = new Pool({
-   user: process.env.DB_USER,
-   password: process.env.DB_PASS,
+   user: "postgres",
+   password: "password",
    database: "oauth_server_db",
    host: "localhost",
-   port: process.env.DB_PORT,
+   port: "5432",
 });
 
 // query db for the client assosiacted with client_id
@@ -35,7 +36,6 @@ export const saveAuthorizationCode = async (
    code,
    clientId,
    redirectUri,
-   userId = 1,
    scope
 ) => {
    // set expiration time for the code
@@ -43,16 +43,9 @@ export const saveAuthorizationCode = async (
    const expiresAt = new Date(Date.now() + authCodeDuration);
    try {
       const queryString = `
-            INSERT INTO authorization_codes (code, client_id, redirect_uri, user_id, expires_at, scope)
-            VALUES ($1, $2, $3, $4, $5, $6)`;
-      const queryParams = [
-         code,
-         clientId,
-         redirectUri,
-         userId,
-         expiresAt,
-         scope,
-      ];
+            INSERT INTO authorization_codes (code, client_id, redirect_uri, expires_at, scope)
+            VALUES ($1, $2, $3, $4, $5)`;
+      const queryParams = [code, clientId, redirectUri, expiresAt, scope];
       await pool.query(queryString, queryParams);
    } catch (error) {
       console.log(error);

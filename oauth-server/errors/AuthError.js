@@ -9,7 +9,7 @@ class AuthError extends Error {
 
    // if authorzation requests is missing required params
    static invalidRequest(redirectUri, state) {
-      return new OAuthError(
+      return new AuthError(
          "invalid_request",
          "Missing required parameters",
          400,
@@ -20,7 +20,7 @@ class AuthError extends Error {
 
    // if authorization req is missing redirect URI
    static missingRedirectUri() {
-      return new OAuthError(
+      return new AuthError(
          "invalid_request",
          "Missing redirect URI",
          400,
@@ -31,7 +31,7 @@ class AuthError extends Error {
 
    // if client is not authorized
    static invalidClient(redirectUri, state) {
-      return new OAuthError(
+      return new AuthError(
          "unauthorized_client",
          "Invalid client or redirect URI",
          400,
@@ -61,4 +61,4 @@ class AuthError extends Error {
    }
 }
 
-export default OAuthError;
+export default AuthError;

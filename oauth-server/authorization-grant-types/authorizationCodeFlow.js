@@ -1,5 +1,5 @@
 import { getClient, saveAuthorizationCode } from "../db/queries.js";
-import { generateUniqueCode } from "./utils/code-generator.js";
+import { generateUniqueCode } from "../utils/code-generator.js";
 import AuthError from "../errors/AuthError.js";
 
 export default class AuthCodeFlow {
@@ -15,6 +15,7 @@ export default class AuthCodeFlow {
    async authorize() {
       // verify if the client exists
       const client = await getClient(this.clientId);
+      console.log("client: ", client);
 
       // check if client exists and if the redirect URI matches
       if (!client || client.redirect_uri !== this.redirectUri) {
@@ -30,7 +31,6 @@ export default class AuthCodeFlow {
          this.redirectUri,
          this.scope
       );
-
       return code;
    }
 }
