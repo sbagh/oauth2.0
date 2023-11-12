@@ -1,7 +1,6 @@
 import pkg from "pg";
 import dotenv from "dotenv";
 const { Pool } = pkg;
-dotenv.config();
 
 // connect to db:
 const pool = new Pool({
@@ -39,7 +38,7 @@ export const saveAuthorizationCode = async (
    scope
 ) => {
    // set expiration time for the code
-   const authCodeDuration = parseInt(process.env.AUTHORIZATION_CODE_DURATION);
+   const authCodeDuration = 3000;
    const expiresAt = new Date(Date.now() + authCodeDuration);
    try {
       const queryString = `
