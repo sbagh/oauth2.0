@@ -41,9 +41,10 @@ app.get("/authorize", async (req, res) => {
             code
          )}&state=${encodeURIComponent(state)}`;
 
-         console.log("successfulRedirectUri: ", successfulRedirectUri);
          // redirect user with the authorization code
-         return res.redirect(successfulRedirectUri);
+         // for testing return the redirect uri as json:
+         res.json({ redirectUri: successfulRedirectUri });
+         // return res.redirect(successfulRedirectUri);
       }
    } catch (error) {
       // if error is instance of AuthError class, handle the response else return a server error
@@ -60,7 +61,19 @@ app.get("/authorize", async (req, res) => {
    }
 });
 
-app.get("/token", (req, res) => {});
+// access token endpoint, client calls this endpoint providing the authorization code to get the access token
+app.get("/token", (req, res) => {
+   // get the query params from the request
+   const { grant_type, code, redirect_uri, client_id } = req.query;
+
+   // check for required params
+   if (!grant_type || !code || !redirect_uri || !client_id) {
+      throw AuthError.invalidRequest(null, null);
+   }
+   if (grant_type !== "authorization_code") {
+      throw AuthError.invalidGrantType();
+   }
+});
 
 app.listen(PORT, () => {
    console.log(`Server running on port `, PORT);

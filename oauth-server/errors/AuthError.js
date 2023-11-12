@@ -7,7 +7,7 @@ class AuthError extends Error {
       this.state = state;
    }
 
-   // if authorzation requests is missing required params
+   // if request is missing params other than redirect URI
    static invalidRequest(redirectUri, state) {
       return new AuthError(
          "invalid_request",
@@ -29,7 +29,7 @@ class AuthError extends Error {
       );
    }
 
-   // if client is not authorized
+   // if client is not authorized, meaning client is not registered or redirect URI does not match
    static invalidClient(redirectUri, state) {
       return new AuthError(
          "unauthorized_client",
@@ -37,6 +37,16 @@ class AuthError extends Error {
          400,
          redirectUri,
          state
+      );
+   }
+
+   static invalidGrantType() {
+      return new AuthError(
+         "invalid_grant",
+         "Invalid grant type",
+         400,
+         null,
+         null
       );
    }
 
