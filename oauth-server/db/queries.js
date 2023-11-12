@@ -53,3 +53,24 @@ export const saveAuthorizationCode = async (
       );
    }
 };
+
+export const getAuthzDataFromClientId = async (client_id) => {
+   try {
+      const queryString = `
+            SELECT * FROM authorization_codes
+            WHERE client_id = $1`;
+      const queryParams = [client_id];
+      const result = await pool.query(queryString, queryParams);
+
+      // if no code found, return null
+      if (!result.rows.length) {
+         return null;
+      }
+
+      // return the code
+      return result.rows[0];
+   } catch (error) {
+      console.log(error);
+      throw new Error("Database error");
+   }
+};

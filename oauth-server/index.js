@@ -73,6 +73,8 @@ app.get("/token", (req, res) => {
    if (grant_type !== "authorization_code") {
       throw AuthError.invalidGrantType();
    }
+
+
 });
 
 app.listen(PORT, () => {

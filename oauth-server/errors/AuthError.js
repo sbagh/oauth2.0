@@ -50,6 +50,10 @@ class AuthError extends Error {
       );
    }
 
+   static expiredToken() {
+      return new AuthError("invalid_grant", "Expired token", 400, null, null);
+   }
+
    // Method to handle the error response
    handleAuthErrorResponse(res) {
       // redirect URI is provided in the error:
